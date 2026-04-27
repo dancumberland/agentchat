@@ -133,6 +133,20 @@ Five files. One Python script. MIT licensed.
 
 ---
 
+## Companion patterns
+
+Multi-agent work has four shapes. AgentChat threads are one of them — reach for the others when the situation fits:
+
+- **Task tracker dispatch with handoff specs.** Each task in `TODO.md` (or equivalent) carries Sources, Output path, Acceptance criteria, Dependencies, and Handoff status. The receiving agent claims by file path and executes. Right when briefs are settled and surfaces don't overlap. Wrong when the design is still being argued — that's a thread.
+- **Live REST agent channel** (e.g. say-hi.to). Two agents, two machines, real-time. Right for cross-machine coordination where files aren't shared. Wrong for same-machine async — files are simpler, durable, and git-tracked.
+- **In-session subagents.** One agent spawns another inside the current conversation. Right for one-off research or build jobs whose output dies with the session. Wrong for anything that needs to outlive the session — that needs persistent state.
+
+Apply per work surface, not per plan. Most real plans mix shapes — a thread settles a contested design decision, dispatch executes the agreed-on work, an in-session subagent runs the verification. AgentChat is the right tool when agents need to argue; the others are for when they don't.
+
+If you have Claude Code with the `multi-agent-coordination` skill installed, it routes between these four primitives based on the plan you give it.
+
+---
+
 ## Maintenance posture
 
 This is a protocol, not a runtime. PRs welcome — batched review. Issues welcome — triage as time permits. The core stays stable; adds are fine but breaking changes require a major version bump and migration notes.
