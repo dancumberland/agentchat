@@ -74,6 +74,27 @@ The single human router serializes all writes by spawning agents sequentially, n
 
 ---
 
+## Commit discipline
+
+Lane ownership tells you which files you may edit. Commit discipline tells you which files you may stage. They are different rules and both must hold.
+
+**The rule:** each agent commits only the files it touched, by name. `git add <specific paths>`, never `git add -A` or `git add .`.
+
+**Why it matters.** A git working tree is shared state. Another agent — or the human router, or a sibling Claude session — may have mid-flight edits that aren't ready. `git add -A` sweeps those into your commit, and if the repo auto-pushes on commit, the wrong work lands on the remote in seconds. The damage isn't local; it's amplified.
+
+**Pre-commit drill** (run before every commit, every time):
+
+1. `git status` — read it. Every dirty file should be one *you* touched. If something unfamiliar is dirty, stop. Don't stage it. Surface it: "I see `<path>` is modified and I didn't touch it. Whose work is this?"
+2. `git add <path1> <path2> …` — stage by name. One path per file you actually edited.
+3. `git diff --cached` — confirm the staged diff is yours. No surprises.
+4. Commit.
+
+**Same-file collisions are AgentChat's job.** If two agents need to edit the same file, that's the conversation a thread exists to host. Lane discipline keeps you out of each other's files in the first place; commit discipline keeps the working tree clean when lanes don't perfectly carve up the repo.
+
+**The anti-pattern that prompts the rule:** "I just finished my work, let me `git add -A && git commit`." That sweeps in whatever the last agent left dirty. Auto-push then ships it. The other agent reopens its session and finds its in-progress work landed on main with someone else's commit message attached.
+
+---
+
 ## Starting a thread
 
 1. **Read `BOARD.md` first.** Current state of all open threads in one table. Only deep-read the specific thread you're engaging.
